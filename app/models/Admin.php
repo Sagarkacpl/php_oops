@@ -10,17 +10,28 @@ class Admin {
 
     public function checkCredentials($username, $password) {
         // Hash the plain-text password with MD5
+        
         $passwordHash = md5($password);
         // Safe SQL with prepared statements
         $sql = "SELECT * FROM admins WHERE username = :username AND password = :password LIMIT 1";
         try {
-            $pdo = $this->db->getConnection(); // Assumes your Database class has getConnection() that returns a PDO instance
+            $pdo = $this->db->getConnection(); 
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':username', $username, PDO::PARAM_STR);
             $stmt->bindParam(':password', $passwordHash, PDO::PARAM_STR);
             $stmt->execute();
-            // Optional: fetch user data for session use
+
+            // Debugging: Uncomment below to see what is being checked
+            // $debugSql = str_replace(
+            //     [':username', ':password'],
+            //     [var_export($username, true), var_export($passwordHash, true)],
+            //     $sql
+            // );
+            // echo $debugSql;
+            // exit;
+
             if ($stmt->rowCount() > 0) {
+                
                 // Return user data for session storage
                 return $stmt->fetch(PDO::FETCH_ASSOC);
             }
@@ -33,5 +44,4 @@ class Admin {
             return false;
         }
     }
-
 }
