@@ -1,13 +1,14 @@
 <?php
 require_once(__DIR__ . '/../models/Database.php');
 require_once(__DIR__ . '/../models/User.php');
+require_once(__DIR__ . '/../../functions.php');
 
 class UserController {
     public function create() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && post('username') !== null) {
             $db = new Database();
             $userModel = new User($db);
-            $username = trim($_POST['username']);
+            $username = trim(post('username'));
             $result = $userModel->create($username);
             if (!$result) {
                 // Debugging: Show error if user not created
@@ -32,19 +33,19 @@ class UserController {
     }
 
     public function update() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['username'])) {
-            $id = convert_string('decrypt', $_POST['id']);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && post('id') !== null && post('username') !== null) {
+            $id = convert_string('decrypt', post('id'));
             $db = new Database();
             $userModel = new User($db);
-            $userModel->update((int)$id, trim($_POST['username']));
+            $userModel->update((int)$id, trim(post('username')));
         }
         header("Location: " . BASE_URL . "/admin/dashboard");
         exit;
     }
 
     public function delete() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
-            $id = convert_string('decrypt', $_POST['id']);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && post('id') !== null) {
+            $id = convert_string('decrypt', post('id'));
             $db = new Database();
             $userModel = new User($db);
             $userModel->delete((int)$id);

@@ -21,7 +21,7 @@
     <?php foreach ($users as $user): ?>
     <tr>
         <td><?= htmlspecialchars($user['id']) ?></td>
-        <td><?= htmlspecialchars($user['username']) ?></td>
+        <td><?= htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8') ?></td>
         <td>
             <!-- Edit User Link -->
             <a href="<?= BASE_URL ?>/user/edit/<?= urlencode(convert_string('encrypt', $user['id'])) ?>">Edit</a>

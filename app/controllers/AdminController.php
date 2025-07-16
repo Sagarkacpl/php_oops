@@ -2,6 +2,7 @@
 session_start();
 require_once(__DIR__ . '/../models/Database.php');
 require_once(__DIR__ . '/../models/User.php');
+require_once(__DIR__ . '/../../functions.php'); // Make sure convert_string is available
 
 class AdminController {
     public function login() {
@@ -19,16 +20,32 @@ class AdminController {
             $u = $_POST['username'];
             $p = $_POST['password'];
 
+            // Encrypt credentials for debug only
+            $encryptedUsername = convert_string('encrypt', $u);
+            $encryptedPassword = convert_string('encrypt', $p);
+
+
+            // echo "<script>console.log('Encrypted Username: " . addslashes($encryptedUsername) . "');</script>";
+            // echo "<script>console.log('Encrypted Password: " . addslashes($encryptedPassword) . "');</script>";
+
             require_once(__DIR__ . '/../models/Admin.php');
             $db = new Database();
             $adminModel = new Admin($db);
 
+            // Pass original credentials for DB check
             $user = $adminModel->checkCredentials($u, $p);
             if ($user) {
                 $_SESSION['admin'] = true;
                 $_SESSION['userid'] = $user['id']; // or 'admin_id' depending on your table
                 $_SESSION['username'] = $user['username'];
-                header("Location: " . BASE_URL . "/admin/dashboard");
+                // header("Location: " . BASE_URL . "/admin/dashboard");
+                // exit;
+                echo "<div style='color: green; font-weight: bold;'>Login successfully. Redirecting to dashboard...</div>";
+                echo "<script>
+                        setTimeout(function() {
+                            window.location.href = '" . BASE_URL . "/admin/dashboard';
+                        }, 5000);
+                      </script>";
                 exit;
             } else {
                 $error = "Invalid username or password.";
