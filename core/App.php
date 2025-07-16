@@ -1,5 +1,8 @@
 <?php
 
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+
 class App {
     protected $controller = 'HomeController';
     protected $method = 'index';
@@ -19,6 +22,10 @@ class App {
         if (isset($url[1]) && method_exists($this->controller, $url[1])) {
             $this->method = $url[1];
             unset($url[1]);
+        } elseif (!method_exists($this->controller, $this->method)) {
+            // Show 404 or error if method does not exist
+            http_response_code(404);
+            exit("404 Not Found: Method '{$this->method}' not found in controller '{$this->controller}'.");
         }
 
         $this->params = $url ? array_values($url) : [];
